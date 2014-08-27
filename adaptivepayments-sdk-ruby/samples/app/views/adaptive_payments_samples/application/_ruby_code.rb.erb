@@ -1,0 +1,19 @@
+require 'paypal-sdk-<%= service_name.gsub("_", "") %>'
+@api = PayPal::SDK::<%= service_name.camelize %>::API.new
+
+# Build request object
+@<%= service_action %> = @api.build_<%= service_action %>(<%=raw format_hash(request_hash) %>)
+
+# Make API call & get response
+@<%= service_action %>_response = @api.<%= service_action %>(@<%= service_action %>)
+
+# Access Response
+if @<%= service_action %>_response.success?
+<% api_response.members.keys.each do |name| -%>
+  <% unless [:xmlns, :type, :responseEnvelope, :error].include? name -%>
+  @<%= service_action %>_response.<%= name %>
+  <% end %>
+<% end -%>
+else
+  @<%= service_action %>_response.error
+end
